@@ -282,16 +282,21 @@ if st.button('Iniciar procesamiento de los datos'):
     
 
    
-datos = pd.concat(l,ignore_index=True)
+
 try:
     st.write(pensiones)
+    datos = pd.concat(l,ignore_index=True)
 except:
     st.warning('Ingresar todos los datos para ver la prueba')
     
+try:
+     
+   st.markdown(get_table_download_link(l), unsafe_allow_html=True)
+   st.markdown(get_table_total(datos), unsafe_allow_html=True)
+except:
+    st.warning('Ingresar todos los datos en su casilla correspondiente')
 
-st.markdown(get_table_download_link(l), unsafe_allow_html=True)
-st.markdown(get_table_total(datos), unsafe_allow_html=True)
-#if st.button('Descargar la Informacion'):
+   #if st.button('Descargar la Informacion'):
 #    try: 
 #       
 #        st.markdown(get_table_download_link(l), unsafe_allow_html=True)
