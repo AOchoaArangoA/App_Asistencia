@@ -9,7 +9,6 @@ import streamlit as st
 import pandas as pd 
 import base64
 from io import BytesIO
-
 st.title('Actualización de la Información Asistenicias Conglomerado')
 
 #st.markdown("![Alt Text](https://play-lh.googleusercontent.com/eauM3AYv2Ki2jBb6PF1g4TbI_OGBMBnWLXal3Se4FHQU0GKWuSuO6-iRP4lSDK3j7I4)")
@@ -284,8 +283,12 @@ if st.button('Iniciar procesamiento de los datos'):
 
    
 datos = pd.concat(l,ignore_index=True)
+try:
+    st.write(pensiones)
+except:
+    st.warning('Ingresar todos los datos para ver la prueba')
+    
 
-st.write(pensiones)
 st.markdown(get_table_download_link(l), unsafe_allow_html=True)
 st.markdown(get_table_total(datos), unsafe_allow_html=True)
 #if st.button('Descargar la Informacion'):
