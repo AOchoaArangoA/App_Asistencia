@@ -289,12 +289,12 @@ try:
 except:
     st.warning('Ingresar todos los datos para ver la prueba')
     
-try:
+
      
-   st.markdown(get_table_download_link(l), unsafe_allow_html=True)
-   st.markdown(get_table_total(datos), unsafe_allow_html=True)
-except:
-    st.warning('Ingresar todos los datos en su casilla correspondiente')
+st.markdown(get_table_download_link(l), unsafe_allow_html=True)
+st.markdown(get_table_total(datos), unsafe_allow_html=True)
+
+#st.warning('Ingresar todos los datos en su casilla correspondiente')
 
    #if st.button('Descargar la Informacion'):
 #    try: 
