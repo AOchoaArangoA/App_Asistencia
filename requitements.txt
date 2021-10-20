@@ -1,3 +1,4 @@
 streamlit==1.0.0
 pandas==1.2.4
 base58==2.1.0
+io == 3.10.
