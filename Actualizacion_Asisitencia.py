@@ -284,6 +284,9 @@ if st.button('Iniciar procesamiento de los datos'):
    
 
 try:
+    st.markdown('''## Ejemplo sobre el procesamiento de datos
+                      La tabla que se presenta establece un ejemplo sobre el procesamiento de los datos. Cuando un los datos se encuentran procesados aparecen una serie de numeros al final de la tabla.
+                      *Verificar que los datos esten procesados antes de descargar*   ''') 
     st.write(pensiones)
     datos = pd.concat(l,ignore_index=True)
 except:
