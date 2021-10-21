@@ -295,7 +295,7 @@ try:
    st.markdown(get_table_download_link(l), unsafe_allow_html=True)
    st.markdown(get_table_total(datos), unsafe_allow_html=True)
 except: 
-   st.warning('Para descargar la información se debe ingresar todos los datos'  
+   st.warning('Para descargar la información se debe ingresar todos los datos') 
 
 
 
