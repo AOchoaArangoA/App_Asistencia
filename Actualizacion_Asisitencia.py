@@ -210,7 +210,7 @@ if fla is not None:
 parques_eve_ANT =  st.file_uploader('Ingresar la informacion de la Empresa de Parques y Eventos de Antioquia - Activa')
 if parques_eve_ANT is not None: 
    parques_eve_ANT= pd.read_excel(parques_eve_ANT, sheet_name='ACTIVA EMPRESA DE PARQUES Y EVE')
-   parques_eve_ANT['NIT'] = 0
+   parques_eve_ANT['NIT'] = 9014379578
 idea =  st.file_uploader('Ingresar la informacion del Instituto para el Desarrollo de Antioquia - IDEA')
 if idea is not None: 
    idea= pd.read_excel(idea, sheet_name='INSTITUTO PARA EL DESARROLLO DE')
