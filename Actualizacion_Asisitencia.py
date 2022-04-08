@@ -223,12 +223,12 @@ if pensiones is not None:
    
 caucasia =  st.file_uploader('Ingresar la informacion de E.S.E. Hospital César Uribe Piedrahita (Caucasia)')
 if caucasia is not None: 
-   caucasia= pd.read_excel(pensiones, sheet_name= 'E.S.E HOSPITAL CESAR URIBE PIED')
+   caucasia= pd.read_excel(caucasia, sheet_name= 'E.S.E HOSPITAL CESAR URIBE PIED')
    caucasia['NIT'] = 890980757
 
 caldas =  st.file_uploader('Ingresar la informacion de E.S.E. Hospital Regional San Vicente de Paul (Caldas)')
 if caldas is not None: 
-   caldas= pd.read_excel(pensiones, sheet_name= 'E.S.E HOSPITAL REGIONAL SAN VIC')
+   caldas= pd.read_excel(caldas, sheet_name= 'E.S.E HOSPITAL REGIONAL SAN VIC')
    caldas['NIT'] = 890907215
 
 
