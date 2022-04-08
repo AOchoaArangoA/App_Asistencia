@@ -78,7 +78,7 @@ def EnviarExcel(lista):
     writer=pd.ExcelWriter(salida, engine='xlsxwriter')
     l = ['marcofi1','sanra1','hospital_mental1','U_digital1','Tec_Antioquia1','cul_pa_ANT1','indeportes1','Poli1','ferro_ANT1','Refo_int_ANT1',
                    'loteria_medellin1','viv_infra_ANT1','savia_salud1','gilberto_eche1','drug_galan1','ese_maria1','re_salud_mental1','tele_ANT1',
-                   'fla1','parques_eve_ANT1','idea1','Pensiones']
+                   'fla1','parques_eve_ANT1','idea1','Pensiones', 'Caucasia', 'Caldas']
     j = 0
     for i in lista: 
         
@@ -220,12 +220,23 @@ pensiones =  st.file_uploader('Ingresar la informacion de la Entidad administrad
 if pensiones is not None: 
    pensiones= pd.read_excel(pensiones, sheet_name= 'Form1')
    pensiones['NIT'] = 800216278
+   
+caucasia =  st.file_uploader('Ingresar la informacion de E.S.E. Hospital César Uribe Piedrahita (Caucasia)')
+if caucasia is not None: 
+   caucasia= pd.read_excel(pensiones, sheet_name= 'E.S.E HOSPITAL CESAR URIBE PIED')
+   caucasia['NIT'] = 890980757
+
+caldas =  st.file_uploader('Ingresar la informacion de E.S.E. Hospital Regional San Vicente de Paul (Caldas)')
+if caldas is not None: 
+   caldas= pd.read_excel(pensiones, sheet_name= 'E.S.E HOSPITAL REGIONAL SAN VIC')
+   caldas['NIT'] = 890907215
+
 
 
 
 l = [marcofi,sanra,hospital_mental,U_digital,Tec_Antioquia,cul_pa_ANT,indeportes,Poli,ferro_ANT,Refo_int_ANT,
                    loteria_medellin,viv_infra_ANT,savia_salud,gilberto_eche,drug_galan,ese_maria,re_salud_mental,tele_ANT,
-                   fla,parques_eve_ANT,idea,pensiones]
+                   fla,parques_eve_ANT,idea,pensiones, caucasia, caldas]
 
 if st.button('Iniciar procesamiento de los datos'):
     try:
@@ -252,6 +263,8 @@ if st.button('Iniciar procesamiento de los datos'):
         Organizador(parques_eve_ANT)
         Organizador(idea)
         Organizador(pensiones)
+        Organizador(caucasia)
+        Organizador(caldas)
         Porcentaje(sanra)
         Porcentaje(marcofi)
         Porcentaje(hospital_mental)
@@ -275,6 +288,8 @@ if st.button('Iniciar procesamiento de los datos'):
         Porcentaje(parques_eve_ANT)
         Porcentaje(idea)
         Porcentaje(pensiones)
+        Porcentaje(caucasia)
+        Porcentaje(caldas)
         st.success('El procesamiento se hizo de manera exitosa')
     except :
         st.warning('Problemas con el procemiento, vuelva a intentarlo')
