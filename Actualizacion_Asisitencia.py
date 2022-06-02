@@ -4,29 +4,37 @@ Created on Mon Oct 11 09:29:10 2021
 
 @author: Administrador
 """
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Oct 11 09:29:10 2021
+
+@author: Administrador
+"""
 
 import streamlit as st 
 import pandas as pd 
+import re
 import base64
 from io import BytesIO
 st.title('Actualización de la Información Asistenicias Conglomerado')
 
 #st.markdown("![Alt Text](https://play-lh.googleusercontent.com/eauM3AYv2Ki2jBb6PF1g4TbI_OGBMBnWLXal3Se4FHQU0GKWuSuO6-iRP4lSDK3j7I4)")
-#st.image("https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.catastroantioquia.co%2F&psig=AOvVaw0LvWIMZ1I8cN0jHuY7sI0O&ust=1634328283273000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCIjj0brZyvMCFQAAAAAdAAAAABAd", 
-         #width=400)
+# st.image("https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.catastroantioquia.co%2F&psig=AOvVaw0LvWIMZ1I8cN0jHuY7sI0O&ust=1634328283273000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCIjj0brZyvMCFQAAAAAdAAAAABAd", 
+#          width=400)
 
 st.markdown('''
             Introducción: 
 Este aplicativo realiza la consolidación de las asistencias de las 24 entidades de la Gobernación de Antioquia. La funcionalidad de esta página es la siguiente: Recoge la información en formato Excel (.xlsx) y realiza una serie de procedimientos para extraer información sobre quien asistió, quien no y el promedio de asistencia para todas las entidades. 
 Forma de utilizar: 
-*	**Paso 1**: Ingresar en cada casilla el archivo correspondiente a la entidad que se muestra en la parte superior
-*	**Paso 2**: Presionar el botón “Iniciar procesamiento de los datos”
-*	**Paso 3**: En la ventana superior izquierda se debe oprimir el botón “Descargar la Información” y luego descargar los 2 archivos. 
+*	**Paso 1**: Ingresar en cada casilla la carpeta denomindad 'REGISTROS FORMULARIOS' que se encuentra en el OneDrive de la cuenta del conglomerado
+*	**Paso 2**: Oprimir los links de las descargas de todos los archivos
+*	**Paso 3**: (Opcional) Si se desea obtener la información del tacometro, se debe seleccionar el botón que se encuentra abajo de la aplicación
 
 Los archivos que se descarguen son los que remplazaran los que se encuentran en el OneDrive.
 
 **Nota importante:** 
-Los archivos deben ser los mismos que arroja la plataforma Forms. Cualquier modificación causara problemas en el procesamiento de los datos.
+Los archivos deben ser los mismos que arroja la plataforma Forms. Cualquier modificación causara problemas en el procesamiento de los datos. Ademas se debe tener en cuenta que todos los archivos que se encuentran en el OneDrive estan parametrizados. Cualquier cambio en la estructura de los archivos puede dañar el procesamiento de la información. 
+
 
             
             ''')
@@ -73,25 +81,21 @@ def Porcentaje(DataFrame):
     return DataFrame
 
 
-def EnviarExcel(lista):
+def EnviarExcel(lista, hojas_name):
     salida = BytesIO()
     writer=pd.ExcelWriter(salida, engine='xlsxwriter')
-    l = ['marcofi1','sanra1','hospital_mental1','U_digital1','Tec_Antioquia1','cul_pa_ANT1','indeportes1','Poli1','ferro_ANT1','Refo_int_ANT1',
-                   'loteria_medellin1','viv_infra_ANT1','savia_salud1','gilberto_eche1','drug_galan1','ese_maria1','re_salud_mental1','tele_ANT1',
-                   'fla1','parques_eve_ANT1','idea1','Pensiones', 'Caucasia', 'Caldas']
+    l = hojas_name
     j = 0
     for i in lista: 
-        
         i.to_excel(writer, sheet_name='Data_{}'.format(l[j]))
-      
         j+= 1
     writer.save()
     
     processed_dta = salida.getvalue()
     return processed_dta
 
-def get_table_download_link(df):
-    val = EnviarExcel(df)
+def get_table_download_link(df, datos):
+    val = EnviarExcel(df, datos)
     b64 = base64.b64encode(val)
     href = f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="Asistencia_x_Entidad.xlsx">Decargar Asistencia por Entidad</a>'
     return href
@@ -99,7 +103,7 @@ def get_table_download_link(df):
 def EnviarExcel_total(df): 
     salida = BytesIO()
     writer = pd.ExcelWriter(salida, engine='xlsxwriter')
-    df.to_excel(writer, sheet_name='Sheet1')
+    df.to_excel(writer, sheet_name='Base_Completa')
     writer.save()
     processed_dta = salida.getvalue()
     return processed_dta
@@ -110,225 +114,105 @@ def get_table_total(df):
     href = f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="Asistencia.xlsx">Decargar Asistencia Consolidado</a>'
     return href
 
+def get_table_total_2(df):     
+    val = EnviarExcel_total(df)
+    b64 = base64.b64encode(val)
+    href = f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="Tacometro.xlsx">Decargar Información Tacometro</a>'
+    return href
 
+def Identificador():
+    
+    pass
+
+nombres = {'1':890985703, '2': 890980066, '3':890905166, '4':901168222, '5': 890905419, '6':900425129,
+           '7':811007127, '8':890980136, '9':900988911, '10':811038424, '11':890980058, '12':811032187,
+           '13':900604350, '14':900679194, '15':901341579, '16':890905177, '17':890985405, '18':890937233,
+           '19':890900286, '20':9014379578, '21': 890980179, '22':800216278, '23':890980757, '24':890907215}
 ###############################
-
-#Vamos a pedir toda la información en tableros de uploader 
-marcofi = st.file_uploader('Ingresar la informacion de la E.S.E Marco Fidel Suarez')
-if marcofi is not None: 
-    marcofi = pd.read_excel(marcofi, sheet_name ='E.S.E HOSPITAL MARCO FIDEL SUÁR') 
-    marcofi['NIT'] = 890985703
-    #marcofi = pd.DataFrame(marcofi)
-
-sanra = st.file_uploader('Ingresar la informacion de la E.S.E. Hospital San Rafael de Itagüí')
-if sanra is not None: 
-    sanra = pd.read_excel(sanra, sheet_name =  'E.S.E HOSPITAL SAN RAFAEL DE IT')
-    sanra['NIT'] = 890980066
-
-hospital_mental = st.file_uploader('Ingresar la informacion de la E.S.E. Hospital Mental de Antioquia Maria Upegui - Homo')
-if hospital_mental is not None: 
-    hospital_mental = pd.read_excel(hospital_mental, sheet_name='HOSPITAL MENTAL DE ANTIOQUIA - ')
-    hospital_mental['NIT'] = 890905166
-
-U_digital =  st.file_uploader('Ingresar la informacion de la Institución Universitaria Digital de Antioquia - IU Digital')
-if U_digital is not None: 
-    U_digital = pd.read_excel(U_digital, sheet_name='INSTITUCIÓN UNIVERSITARIA DIGIT')
-    U_digital['NIT'] = 901168222
-
-Tec_Antioquia =  st.file_uploader('Ingresar la informacion del Tecnológico de Antioquia - Intitución Universitaria')
-if Tec_Antioquia is not None: 
-    Tec_Antioquia = pd.read_excel(Tec_Antioquia,sheet_name= 'Form1')
-    Tec_Antioquia['NIT'] = 890905419
-
-cul_pa_ANT =  st.file_uploader('Ingresar la informacion del Instituto de Cultura y Patrimonio de Antioquia')
-if cul_pa_ANT is not None: 
-    cul_pa_ANT = pd.read_excel(cul_pa_ANT, sheet_name='INSTITUTO DE CULTURA Y PATRIMON')
-    cul_pa_ANT['NIT'] = 900425129
-
-indeportes =  st.file_uploader('Ingresar la informacion del Instituto Departamental de Deportes Antioquia - INDEPORTES')
-if indeportes is not None: 
-    indeportes = pd.read_excel(indeportes, sheet_name='INSTITUTO DEPARTAMENTAL DE DEPO')
-    indeportes['NIT'] = 811007127
-
-Poli = st.file_uploader('Ingresar la informacion del Politécnico Colombiano Jaime Isaza Cadavid')
-if Poli is not None: 
-    Poli = pd.read_excel(Poli,sheet_name= 'POLITÉCNICO COLOMBIANO JAIME IS')
-    Poli['NIT'] = 890980136
-    
-ferro_ANT = st.file_uploader('Ingresar la informacion de la Promotora Ferrocarril de Antioquia S.A.S.')
-if ferro_ANT is not None: 
-    ferro_ANT = pd.read_excel(ferro_ANT, sheet_name='PROMOTORA FERROCARRIL DE ANTIOQ')
-    ferro_ANT['NIT'] = 900988911
-
-Refo_int_ANT =  st.file_uploader('Ingresar la informacion de la Reforestadora Integral de Antioquia S.A. - RIA')
-if Refo_int_ANT is not None: 
-    Refo_int_ANT = pd.read_excel(Refo_int_ANT, sheet_name='REFORESTADORA INTEGRAL DE ANTIO')
-    Refo_int_ANT['NIT'] = 811038424
-
-loteria_medellin =  st.file_uploader('Ingresar la informacion de la Loteria de Medellín')
-if loteria_medellin is not None: 
-    loteria_medellin = pd.read_excel(loteria_medellin, sheet_name='LOTERÍA DE MEDELLÍN')
-    loteria_medellin['NIT'] = 890980058
-
-viv_infra_ANT =  st.file_uploader('Ingresar la informacion de la Empresa de Vivienda e Infraestructura de Antioquia - VIVA')
-if viv_infra_ANT is not None: 
-    viv_infra_ANT = pd.read_excel(viv_infra_ANT, sheet_name='EMPRESA DE VIVIENDA E INFRAESTR')
-    viv_infra_ANT['NIT'] = 811032187
-savia_salud =  st.file_uploader('Ingresar la informacion de Alianza Medellín  Antioquia E.P.S. S.A.S. - Savia Salud')
-if savia_salud is not None: 
-    savia_salud = pd.read_excel(savia_salud, sheet_name='ALIANZA MEDELLÍN ANTIOQUIA ')
-    savia_salud['NIT'] = 900604350
-
-gilberto_eche =  st.file_uploader('Ingresar la informacion de la Corporación para el fomento a la Educación Superior - Gilberto Echeverri Mejía')
-if gilberto_eche is not None: 
-   gilberto_eche = pd.read_excel(gilberto_eche, sheet_name = 'CORPORACIÓN GILBERTO ECHEVERRI ')
-   gilberto_eche['NIT'] = 900679194
-drug_galan =  st.file_uploader('Ingresar la informacion de la Escuela contra la drogadicción Luis Carlos Galán Sarmiento')
-if drug_galan is not None: 
-   drug_galan = pd.read_excel(drug_galan, sheet_name = 'ESCUELA CONTRA LA DROGADICCIÓN ')
-   drug_galan['NIT'] = 901341579
-
-ese_maria =  st.file_uploader('Ingresar la informacion de la E.S.E. Hospital La María')
-if ese_maria is not None: 
-   ese_maria = pd.read_excel(ese_maria, sheet_name='E.S.E HOSPITAL LA MARÍA')
-   ese_maria['NIT'] = 890905177
-
-re_salud_mental =  st.file_uploader('Ingresar la informacion de la E.S.E. Centro de Rehabilitación Integral en Salud Mental de Antioquia - Carisma')
-if re_salud_mental is not None: 
-   re_salud_mental = pd.read_excel(re_salud_mental, sheet_name='E.S.E CENTRO DE REHABILITACIÓN ')
-   re_salud_mental['NIT']= 890985405
-tele_ANT =  st.file_uploader('Ingresar la informacion de la Sociedad de Televisión de Antioquia Limitada - TELEANTIOQUIA')
-if tele_ANT is not None: 
-   tele_ANT= pd.read_excel(tele_ANT, sheet_name =' SOCIEDAD DE TELEVISIÓN DE ANTI' )
-   tele_ANT['NIT'] = 890937233
-
-fla =  st.file_uploader('Ingresar la informacion de la Fábrica de Licores y Alcoholes de Antioquia ')
-if fla is not None: 
-   fla= pd.read_excel(fla, sheet_name='FÁBRICA DE LICORES DE ANTIOQUIA')
-   fla['NIT'] = 890900286
-
-parques_eve_ANT =  st.file_uploader('Ingresar la informacion de la Empresa de Parques y Eventos de Antioquia - Activa')
-if parques_eve_ANT is not None: 
-   parques_eve_ANT= pd.read_excel(parques_eve_ANT, sheet_name='ACTIVA EMPRESA DE PARQUES Y EVE')
-   parques_eve_ANT['NIT'] = 9014379578
-idea =  st.file_uploader('Ingresar la informacion del Instituto para el Desarrollo de Antioquia - IDEA')
-if idea is not None: 
-   idea= pd.read_excel(idea, sheet_name='INSTITUTO PARA EL DESARROLLO DE')
-   idea['NIT']= 890980179
-
-pensiones =  st.file_uploader('Ingresar la informacion de la Entidad administradora de Pensiones de Antioquia')
-if pensiones is not None: 
-   pensiones= pd.read_excel(pensiones, sheet_name= 'Form1')
-   pensiones['NIT'] = 800216278
-   
-caucasia =  st.file_uploader('Ingresar la informacion de E.S.E. Hospital César Uribe Piedrahita (Caucasia)')
-if caucasia is not None: 
-   caucasia= pd.read_excel(caucasia, sheet_name= 'E.S.E HOSPITAL CESAR URIBE PIED')
-   caucasia['NIT'] = 890980757
-
-caldas =  st.file_uploader('Ingresar la informacion de E.S.E. Hospital Regional San Vicente de Paul (Caldas)')
-if caldas is not None: 
-   caldas= pd.read_excel(caldas, sheet_name= 'E.S.E HOSPITAL REGIONAL SAN VIC')
-   caldas['NIT'] = 890907215
-
-
-
-
-l = [marcofi,sanra,hospital_mental,U_digital,Tec_Antioquia,cul_pa_ANT,indeportes,Poli,ferro_ANT,Refo_int_ANT,
-                   loteria_medellin,viv_infra_ANT,savia_salud,gilberto_eche,drug_galan,ese_maria,re_salud_mental,tele_ANT,
-                   fla,parques_eve_ANT,idea,pensiones, caucasia, caldas]
-
-if st.button('Iniciar procesamiento de los datos'):
-    try:
-        Organizador(marcofi)
-        Organizador(sanra)      
-        Organizador(hospital_mental)
-        Organizador(U_digital)
-        Organizador(Tec_Antioquia)
-        Organizador(cul_pa_ANT)
-        Organizador(indeportes)
-        Organizador(Poli)
-        Organizador(ferro_ANT)
-        Organizador(Refo_int_ANT)
-#Segunda Tanda
-        Organizador(loteria_medellin)
-        Organizador(viv_infra_ANT)
-        Organizador(savia_salud)
-        Organizador(gilberto_eche)  
-        Organizador(drug_galan)
-        Organizador(ese_maria)
-        Organizador(re_salud_mental)
-        Organizador(tele_ANT)
-        Organizador(fla)
-        Organizador(parques_eve_ANT)
-        Organizador(idea)
-        Organizador(pensiones)
-        Organizador(caucasia)
-        Organizador(caldas)
-        Porcentaje(sanra)
-        Porcentaje(marcofi)
-        Porcentaje(hospital_mental)
-        Porcentaje(U_digital)
-        Porcentaje(Tec_Antioquia)
-        Porcentaje(cul_pa_ANT)
-        Porcentaje(indeportes)
-        Porcentaje(Poli)
-        Porcentaje(ferro_ANT)
-        Porcentaje(Refo_int_ANT)    
-#Segunda Tanda
-        Porcentaje(loteria_medellin)
-        Porcentaje(viv_infra_ANT)
-        Porcentaje(savia_salud)
-        Porcentaje(gilberto_eche)
-        Porcentaje(drug_galan)
-        Porcentaje(ese_maria)
-        Porcentaje(re_salud_mental)
-        Porcentaje(tele_ANT)
-        Porcentaje(fla)
-        Porcentaje(parques_eve_ANT)
-        Porcentaje(idea)
-        Porcentaje(pensiones)
-        Porcentaje(caucasia)
-        Porcentaje(caldas)
-        st.success('El procesamiento se hizo de manera exitosa')
-    except :
-        st.warning('Problemas con el procemiento, vuelva a intentarlo')
+carpeta = st.file_uploader('Ingrese la carpeta con la información de las asistencias', accept_multiple_files= True)
+if carpeta is not None: 
+    datos = []
+    sheets = []
+    for archivo in carpeta: 
+        nombre = str(archivo.name)
+        sheets.append(nombre[:10])
+        idx = [str(s) for s in re.findall(r'-?\d+\.?\d*', nombre)][0]
+        bd = pd.read_excel(archivo, sheet_name='Forms')
+        bd['NIT'] = nombres[idx]
+        Organizador(bd)
+        Porcentaje(bd)
+        datos.append(bd)
         
-    
-
-   
 
 try:
     st.markdown('''### Ejemplo sobre el procesamiento de datos''') 
-    st.write(pensiones)
-    datos = pd.concat(l,ignore_index=True)
+    st.write(datos[0])
+    base_final = pd.concat(datos,ignore_index=True)
 except:
     st.warning('Ingresar todos los datos para ver la prueba')
     
 
 try:
-   
-   st.markdown(get_table_download_link(l), unsafe_allow_html=True)
-   st.markdown(get_table_total(datos), unsafe_allow_html=True)
-   st.success('Se han ingresado todos los datos satisfactoriamente')
+    st.markdown(get_table_total(base_final), unsafe_allow_html=True)
+    st.markdown(get_table_download_link(datos, sheets), unsafe_allow_html=True)
+    st.success('Se han ingresado todos los datos satisfactoriamente')
 except: 
-   st.warning('Para descargar la información se debe ingresar todos los datos') 
-
-
-
-
-
-#st.warning('Ingresar todos los datos en su casilla correspondiente')
-
-   #if st.button('Descargar la Informacion'):
-#    try: 
-#       
-#        st.markdown(get_table_download_link(l), unsafe_allow_html=True)
-#        st.markdown(get_table_total(datos), unsafe_allow_html=True)
-#        
-#    except: 
-#        st.error('Se presento un error. Intente de Nuevo')
-        
+    st.warning('Para descargar la información se debe ingresar todos los datos') 
     
+#######################################
+
+#En este parte se realiza la informacion del tacometro.
+#Definimos la base de datos a utilizar 
+#Debe ser el asistencia total 'base_final'
+if st.button('¿Desea realizar el preprocesamiento para el tacometro?'):
+    cols = ['NIT','Dato GOBERNADOR O SU DELEGADO', 'Dato DESIGNADO POR EL GOBERNADOR',
+        'Dato SECRETARÍA SECCIONAL DE SALUD Y PROTECCIÓN SOCIAL DE ANTIOQUIA', 
+        'Dato SECRETARÍA DE EDUCACIÓN DEPARTAMENTAL', 'Dato SECRETARÍA DE HACIENDA DEPARTAMENTAL',
+        'Dato GOBERNADOR O SU DELEGADO2', 'Dato INDEPENDIENTE' , 'Dato INDEPENDIENTE2',
+        'Dato SERES DESARROLO ECONÓMICO', 'Dato DESIGANDO POR EL GOBERNADOR',
+        'Dato INDEPENDIENTE3','Dato GERENCIA DE INFANCIA, ADOLESCENCIA Y JUVENTD','Dato DESIGANDO POR EL GOBERNADOR']
+
+    gob = ['NIT','Dato GOBERNADOR O SU DELEGADO','Dato DESIGNADO POR EL GOBERNADOR',
+       'Dato GOBERNADOR O SU DELEGADO2', 'Dato REPRESENTANTE DESIGNADO POR EL GOBERNADOR', 'Dato DESIGNADO POR EL GOBERNADOR2', 'Dato REPRESENTATE DESIGNADO POR EL GOBERNADOR']
+    inde = ['NIT','Dato INDEPENDIENTE' , 'Dato INDEPENDIENTE2','Dato INDEPENDIENTE - LIBRE DESIGNACIÓN POR EL GOBERNADOR',
+        'Dato INDEPENDIENTE - LIBRE DESIGNACIÓN POR EL GOBERNADOR2', 'Dato INDEPENDIENTE3']
+    secre = ['NIT','Dato SECRETARÍA SECCIONAL DE SALUD Y PROTECCIÓN SOCIAL DE ANTIOQUIA', 
+        'Dato SECRETARÍA DE EDUCACIÓN DEPARTAMENTAL', 'Dato SECRETARÍA DE HACIENDA DEPARTAMENTAL',
+        'Dato SERES DESARROLLO ECONÓMICO EQUITATIVO','Dato GERENCIA DE INFANCIA, ADOLESCENCIA Y JUVENTD',
+        'Dato SECRETARÍA DE GESTIÓN HUMANA Y DESARROLLO ORGANIZACIONAL DEL DEPARTAMENTO',
+        'Dato SERES DESARROLLO INSTITUCIONAL Y GOBERNANZA', 'Dato DIRECCIÓN DEL DEPARTAMENTO ADMINISTRATIVO DE PLANEACIÓN']
+
+
+    gobernador= base_final.loc[:,gob]
+    gobernador.set_index('NIT', inplace =True)
+    independiente = base_final.loc[:, inde]
+    independiente.set_index('NIT', inplace = True)
+    secretaria = base_final.loc[:, secre]
+    secretaria.set_index('NIT', inplace =True)
+    
+    gobernador2 = gobernador.stack()
+    gobernador3 = pd.DataFrame(gobernador2, columns = ['Gobernador'])
+    gobernador3.reset_index(inplace=True)
+    
+    independiente2 = independiente.stack()
+    independiente3 = pd.DataFrame(independiente2, columns = ['independiente'])
+    independiente3.reset_index(inplace=True)
+    
+    secretaria2 = secretaria.stack()
+    secretaria3 = pd.DataFrame(secretaria2, columns = ['secretaria'])
+    secretaria3.reset_index(inplace=True)
+    
+    consolidado_un = pd.concat([gobernador3, independiente3, secretaria3])
+    consolidado = pd.concat([gobernador2, independiente2, secretaria2])
+    
+    st.write('El promedio de Gob es: {}, el promedio de inde: {}, el promedio de secre: {} y el consolidado es {}'.format(gobernador2.mean(),
+                                                                                             independiente2.mean(),
+                                                                                             secretaria2.mean(),
+                                                                                             consolidado.mean()))
+    try:
+        st.markdown(get_table_total_2(consolidado_un), unsafe_allow_html=True)
+        st.success('Se han ingresado todos los datos satisfactoriamente')
+    except: 
+        st.warning('Para descargar la información se debe ingresar todos los datos') 
     
     
