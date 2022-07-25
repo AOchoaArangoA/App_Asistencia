@@ -117,7 +117,7 @@ def get_table_total(df):
 def get_table_total_2(df):     
     val = EnviarExcel_total(df)
     b64 = base64.b64encode(val)
-    href = f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="Tacometro.xlsx">Decargar Información Tacometro</a>'
+    href = f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="Info_Tacometro.xlsx">Decargar Información Tacometro</a>'
     return href
 
 def Identificador():
